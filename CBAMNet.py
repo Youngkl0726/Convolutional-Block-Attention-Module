@@ -19,6 +19,7 @@ class CBAM_Module(nn.Module):
         self.sigmoid_spatial = nn.Sigmoid()
 
     def forward(self, x):
+        # Channel attention module
         module_input = x
         avg = self.avg_pool(x)
         mx = self.max_pool(x)
@@ -30,6 +31,7 @@ class CBAM_Module(nn.Module):
         mx = self.fc2(mx)
         x = avg + mx
         x = self.sigmoid_channel(x)
+        # Spatial attention module
         x = module_input * x
         module_input = x 
         avg = torch.mean(x, 1, True)
@@ -69,7 +71,7 @@ class Bottleneck(nn.Module):
 
 class CBAMResNetBottleneck(Bottleneck):
     """
-    ResNet bottleneck with a Squeeze-and-Excitation module. It follows Caffe
+    ResNet bottleneck with a CBAM_Module. It follows Caffe
     implementation and uses `stride=stride` in `conv1` and not in `conv2`
     (the latter is used in the torchvision implementation of ResNet).
     """
